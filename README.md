@@ -1,5 +1,8 @@
 # Vize
 
+> [!WARNING]
+> Work in progress. Expect bugs ahead!
+
 An offline, privacy-preserving mobile system that can extract, analyze, and translate real-world text between English and Vietnamese — all running directly on the device.
 
 This project aims to complete a thesis at HCMUTE (Ho Chi Minh City University of Technology and Education), Vietnam.
