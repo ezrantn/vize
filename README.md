@@ -15,3 +15,7 @@ This project develops a mobile app using Flutter and lightweight AI models for:
 - Neural Machine Translation (English ↔ Vietnamese)
 
 All processing runs on-device using TensorFlow Lite, ensuring fast, offline, and secure translation without cloud dependency.
+
+## Architecture
+
+1. OCR Pipeline
