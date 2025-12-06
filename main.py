@@ -1,4 +1,6 @@
 from paddleocr import PaddleOCR
+import glob
+import os
 
 # Initialize the OCR model with specific tuning for Vietnamese
 # 'vi' loads the Vietnamese model, which supports English + Vietnamese accents
@@ -18,18 +20,29 @@ ocr = PaddleOCR(
 )
 
 # Perform OCR on the image
-result = ocr.predict(input="./images/test_1_vn.jpg")
+# 1. Use glob to find all files matching the pattern
+# This creates a list like ['./images/test_1_vn.jpg', './images/test_2_vn.jpg', ...]
+image_paths = glob.glob("./images/test_*_vn.jpg")
 
-# Process and Save Results
-# The 'result' object contains methods to visualize and serialize the data directly.
-# Print detected text and confidence scores to console
-for res in result:
-    res.print()
-    
-    # Save the image with bounding boxes drawn (creates ./output/ folder)
-    res.save_to_img("output")
-    
-    # Save the raw data (coordinates, text, confidence) to a JSON file
-    res.save_to_json("output")
+print(f"Found {len(image_paths)} images to process.")
 
-print("Processing complete. Check the 'output' directory.")
+# 2. Loop through each image path
+for img_path in image_paths:
+    print(f"Processing: {img_path}")
+    
+    # Run prediction on the SINGLE current image
+    result = ocr.predict(input=img_path)
+
+    # 3. Handle results
+    # We create a specific folder name based on the image name so results don't get mixed up
+    # e.g., if file is "test_1_vn.jpg", output goes to "./output/test_1_vn/"
+    base_name = os.path.splitext(os.path.basename(img_path))[0]
+    output_dir = os.path.join("output", base_name)
+    
+    for res in result:
+        res.print()
+        # Save to a specific sub-folder for this image
+        res.save_to_img(output_dir)
+        res.save_to_json(output_dir)
+
+print("Batch processing complete.")
