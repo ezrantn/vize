@@ -1,0 +1,45 @@
+@startuml Architecture
+
+skinparam shadowing false
+skinparam StateBackgroundColor #FDFDFD
+skinparam StateBorderColor #333333
+skinparam ArrowColor #333333
+hide empty description
+
+' Definisi State
+state "Idle (Home)" as Idle
+state "Camera Preview" as Cam
+state "Processing OCR" as OCR
+state "Semantic Analysis" as Sem
+state "Translating" as Trans
+state "Show Result" as Res
+state "Error Handler" as Err
+
+' Definisi Logic Gate (Diamond Shape)
+' Ini adalah titik KRUSIAL untuk Proof di Lean 4
+state c_ocr <<Choice>>
+state c_sem <<Choice>>
+
+' Alur Diagram
+[*] --> Idle
+Idle --> Cam : User Clicks Scan
+
+Cam --> OCR : Image Captured
+Cam --> Idle : Back Button
+
+OCR --> c_ocr : Extraction Done
+' Logic Gate 1: Cek apakah OCR menghasilkan teks?
+c_ocr --> Sem : [Text.Length > 0]
+c_ocr --> Err : [Text Empty / Null]
+
+Sem --> c_sem : Analysis Done
+' Logic Gate 2: Cek apakah kalimatnya masuk akal?
+c_sem --> Trans : [Is Meaningful Text]
+c_sem --> Err : [Is Gibberish / Noise]
+
+Trans --> Res : API Success
+Trans --> Err : Network Timeout
+
+Err --> Idle : Show Alert & Reset
+Res --> Idle : Close Result
+@enduml
